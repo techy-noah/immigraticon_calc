@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 md:pt-32 md:pb-24 text-center">
+    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 text-slate-900 leading-tight max-w-4xl mx-auto">
+        Find out what your EB1A or EB2 NIW profile is missing
+    </h1>
+    <p class="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+        Get a personalized immigration readiness roadmap in under 10 minutes.
+    </p>
+    <div>
+        <a href="{% url 'assessments:form' %}" class="inline-block bg-blue-600 text-white font-medium text-lg px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors">
+            Start Free Assessment
+        </a>
+    </div>
+</section>
+
+<!-- How it Works Section -->
+<section class="bg-white py-20 border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-center text-slate-900 mb-16">How it works</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+            <div class="flex flex-col items-center">
+                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold mb-6">1</div>
+                <h3 class="text-xl font-semibold mb-3 text-slate-900">Answer Questions</h3>
+                <p class="text-slate-600">Provide details about your professional and academic background.</p>
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold mb-6">2</div>
+                <h3 class="text-xl font-semibold mb-3 text-slate-900">Get Your Score</h3>
+                <p class="text-slate-600">Our system analyzes your profile against key EB1/EB2 criteria.</p>
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold mb-6">3</div>
+                <h3 class="text-xl font-semibold mb-3 text-slate-900">Get Roadmap</h3>
+                <p class="text-slate-600">Receive actionable insights and next steps to improve your case.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Benefits Section -->
+<section class="py-20 bg-slate-50 border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-center text-slate-900 mb-16">Why use ImmigrationIntel?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
+                <h3 class="text-lg font-bold text-slate-900 mb-3">Identify Clear Gaps</h3>
+                <p class="text-slate-600 leading-relaxed">Know exactly which areas of your profile need strengthening before you apply.</p>
+            </div>
+            <div class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
+                <h3 class="text-lg font-bold text-slate-900 mb-3">Actionable Steps</h3>
+                <p class="text-slate-600 leading-relaxed">Get concrete recommendations on earning citations, securing critical roles, or obtaining patents.</p>
+            </div>
+            <div class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
+                <h3 class="text-lg font-bold text-slate-900 mb-3">Expert Insight</h3>
+                <p class="text-slate-600 leading-relaxed">Built on proven frameworks from successful EB1A and EB2 NIW approvals.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Bottom CTA Section -->
+<section class="py-24 bg-white border-t border-slate-100 text-center">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-slate-900 mb-6">Ready to see where you stand?</h2>
+        <p class="text-lg text-slate-600 mb-10">Take the first step toward your green card today.</p>
+        <a href="{% url 'assessments:form' %}" class="inline-block bg-blue-600 text-white font-medium text-lg px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors">
+            Start Free Assessment
+        </a>
+    </div>
+</section>
+{% endblock %}

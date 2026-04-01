@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body style="font-family: Arial, sans-serif; color: #333;">
+    <h2>New Assessment Submission</h2>
+    <p>A new user has completed the EB1/EB2 assessment. Here are the details:</p>
+    <ul>
+        <li><strong>Name:</strong> {{ submission.full_name }}</li>
+        <li><strong>Email:</strong> {{ submission.email }}</li>
+        <li><strong>Petition Interest:</strong> {{ submission.petition_type_interest }}</li>
+        <li><strong>Score:</strong> {{ submission.total_score }} / 100</li>
+        <li><strong>Readiness Band:</strong> {{ submission.readiness_band }}</li>
+    </ul>
+    <p><a href="https://immigrationintel.com/admin/assessments/submission/{{ submission.id }}/change/" style="display:inline-block; padding:8px 16px; background:#1e3a8a; color:#fff; text-decoration:none; border-radius:4px;">View in Admin</a></p>
+</body>
+</html>

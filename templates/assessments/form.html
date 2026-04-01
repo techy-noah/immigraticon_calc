@@ -1,0 +1,339 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+        
+        <div class="mb-8">
+            <div class="flex justify-between text-sm font-medium text-slate-500 mb-2">
+                <span>Step <span id="current-step">1</span> of 17</span>
+                <span class="text-blue-600">Takes 7–10 minutes</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full transition-all duration-500 ease-out" id="progress-bar" style="width: 5%"></div>
+            </div>
+        </div>
+
+        <form id="assessment-form" method="POST" action="{% url 'assessments:submit_assessment' %}">
+            {% csrf_token %}
+            
+            <div id="steps-container">
+                <!-- Step 1: Basic Info -->
+                <div class="step" data-step="1">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Basic Information</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                            <input type="text" name="full_name" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="John Doe">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Petition Type Interest -->
+                <div class="step hidden" data-step="2">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Petition Type Interest</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Which petition are you interested in?</label>
+                        <select name="petition_type_interest" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                            <option value="">Select an option</option>
+                            <option value="EB1A">EB1A (Extraordinary Ability)</option>
+                            <option value="EB2_NIW">EB2 NIW (National Interest Waiver)</option>
+                            <option value="NOT_SURE">Not sure</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 3: Education -->
+                <div class="step hidden" data-step="3">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Education</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Highest Degree Earned</label>
+                        <select name="highest_degree" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                            <option value="">Select an option</option>
+                            <option value="Bachelor">Bachelor's Degree</option>
+                            <option value="Master">Master's Degree</option>
+                            <option value="PhD">PhD / Doctorate</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 4: Work Experience -->
+                <div class="step hidden" data-step="4">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Work Experience</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Years of Full-Time Professional Experience</label>
+                            <input type="number" name="years_experience" required min="0" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Current Job Title</label>
+                            <input type="text" name="job_title" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Publications -->
+                <div class="step hidden" data-step="5">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Publications</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Have you authored scholarly articles in professional publications or major media?</label>
+                        <select name="has_publications" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                            <option value="">Select an option</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 6: Citations -->
+                <div class="step hidden" data-step="6">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Citations</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">How many total continuous citations does your work have?</label>
+                        <input type="number" name="citations_count" required min="0" value="0" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <!-- Step 7: Awards -->
+                <div class="step hidden" data-step="7">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Awards</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Have you received nationally or internationally recognized prizes or awards for excellence?</label>
+                        <select name="has_awards" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                            <option value="">Select an option</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 8: Media Publications -->
+                <div class="step hidden" data-step="8">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Media Publications</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Has your work been featured in major trade publications or other major media?</label>
+                        <select name="has_media" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                            <option value="">Select an option</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 9: Judging / Peer Review -->
+                <div class="step hidden" data-step="9">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Judging / Peer Review</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Have you participated as a judge of the work of others in your field (e.g., peer review)?</label>
+                        <select name="has_judging" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                            <option value="">Select an option</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 10: Memberships -->
+                <div class="step hidden" data-step="10">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Memberships</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Are you a member of associations that require outstanding achievements from their members?</label>
+                        <select name="has_memberships" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                            <option value="">Select an option</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 11: Leadership Roles -->
+                <div class="step hidden" data-step="11">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Leadership Roles</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Have you played a leading or critical role for distinguished organizations?</label>
+                        <select name="has_leadership" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                            <option value="">Select an option</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 12: Salary / Remuneration -->
+                <div class="step hidden" data-step="12">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Salary & Remuneration</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Do you command a high salary or other significantly high remuneration compared to others in your field?</label>
+                        <select name="has_high_salary" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                            <option value="">Select an option</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 13: Speaking Engagements -->
+                <div class="step hidden" data-step="13">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Speaking Engagements</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Have you received invitations to speak at major conferences or events in your field?</label>
+                        <select name="has_speaking" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                            <option value="">Select an option</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 14: Patents / Contributions -->
+                <div class="step hidden" data-step="14">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Patents & Contributions</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Do you have original scientific, scholarly, or business-related contributions of major significance (e.g., Patents)?</label>
+                        <select name="has_patents" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                            <option value="">Select an option</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 15: Recommendation Letters -->
+                <div class="step hidden" data-step="15">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Recommendation Letters</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Can you comfortably secure 4-6 strong independent recommendation letters?</label>
+                        <select name="can_get_letters" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                            <option value="">Select an option</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 16: Proposed Endeavor -->
+                <div class="step hidden" data-step="16">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Proposed Endeavor</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Briefly describe your proposed endeavor in the US</label>
+                        <textarea name="proposed_endeavor" required rows="4" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- Step 17: Contact Info -->
+                <div class="step hidden" data-step="17">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900">Contact Information</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                            <input type="email" name="email" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="john@example.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Phone Number (Optional)</label>
+                            <input type="tel" name="phone" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="+1 (555) 000-0000">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-10 flex justify-between items-center">
+                <button type="button" id="prev-btn" class="hidden px-6 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition-colors">Previous</button>
+                <div class="flex-grow"></div>
+                <button type="button" id="next-btn" class="bg-blue-600 text-white px-8 py-2.5 font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm cursor-pointer">Next</button>
+                <button type="submit" id="submit-btn" class="hidden bg-green-600 text-white px-8 py-2.5 font-medium rounded-lg hover:bg-green-700 transition-colors shadow-sm cursor-pointer">Submit Assessment</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const steps = document.querySelectorAll('.step');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const currentStepText = document.getElementById('current-step');
+    const progressBar = document.getElementById('progress-bar');
+    const form = document.getElementById('assessment-form');
+
+    let currentStep = 1;
+    const totalSteps = steps.length;
+
+    function updateUI() {
+        steps.forEach(step => {
+            if(parseInt(step.dataset.step) === currentStep) {
+                step.classList.remove('hidden');
+            } else {
+                step.classList.add('hidden');
+            }
+        });
+
+        currentStepText.textContent = currentStep;
+        progressBar.style.width = ((currentStep / totalSteps) * 100) + '%';
+
+        if (currentStep === 1) {
+            prevBtn.classList.add('hidden');
+        } else {
+            prevBtn.classList.remove('hidden');
+        }
+
+        if (currentStep === totalSteps) {
+            nextBtn.classList.add('hidden');
+            submitBtn.classList.remove('hidden');
+        } else {
+            nextBtn.classList.remove('hidden');
+            submitBtn.classList.add('hidden');
+        }
+    }
+
+    function validateCurrentStep() {
+        const currentStepEl = document.querySelector('.step[data-step="' + currentStep + '"]');
+        const inputs = currentStepEl.querySelectorAll('input[required], select[required], textarea[required]');
+        let isValid = true;
+        
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                isValid = false;
+                input.classList.add('border-red-500');
+                input.classList.remove('border-slate-300');
+            } else {
+                input.classList.remove('border-red-500');
+                input.classList.add('border-slate-300');
+            }
+        });
+        
+        return isValid;
+    }
+
+    nextBtn.addEventListener('click', () => {
+        if (validateCurrentStep() && currentStep < totalSteps) {
+            currentStep++;
+            updateUI();
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentStep > 1) {
+            currentStep--;
+            updateUI();
+        }
+    });
+
+    form.addEventListener('input', (e) => {
+        if (e.target.required && e.target.value.trim()) {
+            e.target.classList.remove('border-red-500');
+            e.target.classList.add('border-slate-300');
+        }
+    });
+
+    form.addEventListener('submit', (e) => {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+        submitBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Analyzing Profile...';
+    });
+
+    updateUI();
+});
+</script>
+{% endblock %}

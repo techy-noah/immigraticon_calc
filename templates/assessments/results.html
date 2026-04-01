@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Results - ImmigrationIntel{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Header / Overall Score -->
+    <div class="bg-white rounded-3xl shadow-lg border border-slate-100 p-8 md:p-12 mb-10 text-center relative overflow-hidden">
+        <div class="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+        
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Your Profile Intelligence Report</h1>
+        <p class="text-slate-500 mb-10 uppercase tracking-wider text-sm font-semibold">Prepared for {{ submission.full_name }}</p>
+
+        <div class="flex flex-col items-center justify-center mb-8">
+            <div class="relative w-56 h-56 flex items-center justify-center rounded-full border-[10px] border-slate-50 shadow-inner bg-white">
+                <svg class="absolute inset-0 w-full h-full text-blue-50 transform -rotate-90" viewBox="0 0 36 36">
+                    <path stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <!-- The dasharray calculation: total_score, 100 -->
+                    <path class="text-blue-600" stroke-width="3" stroke-dasharray="{{ result.total_score }}, 100" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="text-center relative z-10 font-bold">
+                    <span class="text-6xl text-slate-900 tracking-tighter">{{ result.total_score }}</span>
+                    <span class="text-2xl text-slate-400">/ 100</span>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="text-3xl font-extrabold text-slate-900 capitalize mb-4">You have a {{ result.readiness_band }}!</h2>
+        <p class="text-slate-600 max-w-2xl mx-auto text-lg leading-relaxed">
+            Based on our analysis, your profile shows {% if result.total_score >= 60 %}strong{% else %}developing{% endif %} potential. 
+            You have solid foundations in your strongest areas, but there are specific gaps that should be addressed to maximize your chances of a successful EB1A or EB2 NIW petition.
+        </p>
+    </div>
+
+    <!-- Strengths and Gaps Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+        <!-- Strengths -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-green-600 border border-green-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-900">Your Strengths</h3>
+            </div>
+            <ul class="space-y-4">
+                {% for cat in result.strongest_categories %}
+                <li class="flex justify-between items-center bg-slate-50 px-5 py-4 rounded-xl border border-slate-100 transition-colors hover:bg-slate-100">
+                    <span class="font-semibold text-slate-800 capitalize text-lg">{{ cat.category }}</span>
+                    <span class="text-sm font-bold bg-green-100 text-green-700 px-3 py-1.5 rounded-md">{{ cat.score }}/{{ cat.max_score }} pts</span>
+                </li>
+                {% empty %}
+                <li class="text-slate-500 italic p-4 text-center">Not enough data to determine strengths.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Gaps -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 border border-amber-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-900">Areas to Improve</h3>
+            </div>
+            <ul class="space-y-4">
+                {% for cat in result.weakest_categories %}
+                <li class="flex justify-between items-center bg-slate-50 px-5 py-4 rounded-xl border border-slate-100 transition-colors hover:bg-slate-100">
+                    <span class="font-semibold text-slate-800 capitalize text-lg">{{ cat.category }}</span>
+                    <span class="text-sm font-bold bg-amber-100 text-amber-700 px-3 py-1.5 rounded-md">{{ cat.score }}/{{ cat.max_score }} pts</span>
+                </li>
+                {% empty %}
+                <li class="text-slate-500 italic p-4 text-center">No significant gaps identified.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Recommended Next Steps -->
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 md:p-12 mb-10">
+        <h3 class="text-2xl font-bold text-slate-900 mb-8">Recommended Action Plan</h3>
+        <div class="space-y-6">
+            {% for cat in result.weakest_categories %}
+                <div class="flex gap-4 p-6 border border-blue-50 bg-gradient-to-br from-blue-50/50 to-white rounded-2xl shadow-sm">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold shrink-0 text-lg">
+                        {{ forloop.counter }}
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900 capitalize mb-2">Strengthen {{ cat.category }}</h4>
+                        {% for key, val in action_mapping.items %}
+                            {% if key == cat.category %}
+                                <p class="text-slate-600 leading-relaxed">{{ val }}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Call to Actions -->
+    <div class="flex flex-col sm:flex-row gap-5 justify-center mt-12 pb-12">
+        <a href="#" class="inline-flex justify-center items-center bg-blue-600 text-white font-semibold text-lg px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:bg-blue-700 hover:-translate-y-0.5 transition-all">
+            Book a Strategy Consultation
+        </a>
+        <a href="#" class="inline-flex justify-center items-center bg-white text-slate-700 border border-slate-200 font-semibold text-lg px-8 py-4 rounded-xl shadow-sm hover:bg-slate-50 hover:border-slate-300 hover:-translate-y-0.5 transition-all gap-3">
+            <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            Download PDF Report
+        </a>
+    </div>
+
+</div>
+{% endblock %}
