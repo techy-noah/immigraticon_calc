@@ -137,4 +137,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apikey'
 EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY', 'YOUR_SENDGRID_API_KEY_HERE')  # Set securely in production
 DEFAULT_FROM_EMAIL = 'support@immigrationintel.com'
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@immigrationintel.com')
 

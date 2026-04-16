@@ -24,6 +24,7 @@ class Submission(models.Model):
         ('NOT_READY', 'Not ready')
     ]
     eb1_eligibility = models.CharField(max_length=50, choices=ELIGIBILITY_CHOICES, blank=True, null=True)
+    ai_report = models.TextField(null=True, blank=True)
     email_sent = models.BooleanField(default=False)
 
     def __str__(self):

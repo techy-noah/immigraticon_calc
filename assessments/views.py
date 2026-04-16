@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import transaction
 from django.contrib import messages
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.conf import settings
+from django.template.loader import render_to_string
 from .models import Submission, CategoryScore
 from .services import ScoringEngine
 import json
@@ -59,47 +60,11 @@ def submit_assessment(request):
                         max_score=max_score
                     )
 
-            # Send Emails (outside transaction to prevent holding locks during network I/O)
-            try:
-                from django.core.mail import EmailMultiAlternatives
-                
-                # 1. Send User Summary Email
-                user_subject = "Your EB1/EB2 Profile Intelligence Report"
-                user_text = f"Hi {submission.full_name},\n\nYour score is {submission.total_score}/100 ({submission.readiness_band})."
-                user_html = render_to_string('emails/user_summary.html', {'submission': submission})
-                
-                user_msg = EmailMultiAlternatives(
-                    subject=user_subject,
-                    body=user_text,
-                    from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'support@immigrationintel.com'),
-                    to=[submission.email]
-                )
-                user_msg.attach_alternative(user_html, "text/html")
-                user_msg.send()
-
-                # 2. Send Admin Notification Email
-                admin_subject = f"New Submission: {submission.full_name} - Score: {submission.total_score}"
-                admin_text = f"New submission from {submission.full_name} ({submission.email}). Score: {submission.total_score}."
-                admin_html = render_to_string('emails/admin_notification.html', {'submission': submission})
-                
-                admin_msg = EmailMultiAlternatives(
-                    subject=admin_subject,
-                    body=admin_text,
-                    from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'support@immigrationintel.com'),
-                    to=['admin@immigrationintel.com'] # Placeholder admin email
-                )
-                admin_msg.attach_alternative(admin_html, "text/html")
-                admin_msg.send()
-
-                # 3. Update Submission
-                submission.email_sent = True
-                submission.save(update_fields=['email_sent'])
-                
-            except Exception as email_err:
-                logger.error(f"Failed to send emails: {str(email_err)}")
-                # We continue anyway to ensure the user reaches the results page.
-
-            # Store engine result in session to avoid passing heavy params, or rely on db for results page
+            # Trigger async tasks (non-blocking) - emails sent in background
+            from .services.ai_tasks import AIReportGenerator, send_submission_emails_async
+            AIReportGenerator.trigger(submission)
+            send_submission_emails_async(submission.pk)
+            
             return redirect('assessments:results', pk=submission.pk)
 
         except Exception as e:
@@ -164,6 +129,20 @@ def resend_results_email(request, pk):
         messages.error(request, 'Failed to send email. Please try again.')
     
     return redirect('assessments:results', pk=pk)
+
+def get_ai_report(request, pk):
+    """API endpoint to fetch AI report status and content."""
+    submission = get_object_or_404(Submission, pk=pk)
+    
+    if submission.ai_report:
+        return JsonResponse({
+            'status': 'ready',
+            'report': submission.ai_report
+        })
+    else:
+        return JsonResponse({
+            'status': 'generating'
+        })
 
 def download_results_pdf(request, pk):
     """Generate and download results as PDF"""

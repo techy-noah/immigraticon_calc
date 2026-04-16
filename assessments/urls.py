@@ -10,4 +10,5 @@ urlpatterns = [
     path('results/<int:pk>/', views.assessment_results, name='results'),
     path('results/<int:pk>/download-pdf/', views.download_results_pdf, name='download_pdf'),
     path('results/<int:pk>/resend-email/', views.resend_results_email, name='resend_email'),
+    path('api/results/<int:pk>/ai-report/', views.get_ai_report, name='get_ai_report'),
 ]
