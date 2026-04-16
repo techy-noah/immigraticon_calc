@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>EB1/EB2 Profile Intelligence Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            color: #1f2937;
+            line-height: 1.6;
+            background-color: #f9fafb;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .score-section {
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #bfdbfe;
+        }
+        
+        .score-display {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .score-number {
+            font-size: 60px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+        
+        .score-total {
+            font-size: 18px;
+            color: #4b5563;
+        }
+        
+        .readiness-band {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e40af;
+            margin-top: 10px;
+        }
+        
+        .summary {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #f3f4f6;
+            border-left: 4px solid #2563eb;
+            border-radius: 4px;
+        }
+        
+        .summary p {
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+        
+        .strengths {
+            background: linear-gradient(135deg, #f0fdf4 0%, #f7fee7 100%);
+            border-left: 4px solid #16a34a;
+        }
+        
+        .improvements {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-left: 4px solid #d97706;
+        }
+        
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .category-name {
+            font-weight: 600;
+            text-transform: capitalize;
+            flex: 1;
+        }
+        
+        .category-score {
+            background: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+        
+        .action-plan {
+            background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+            border-left: 4px solid #2563eb;
+        }
+        
+        .action-item {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .action-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background: #2563eb;
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .action-content h4 {
+            font-size: 14px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 5px;
+            text-transform: capitalize;
+        }
+        
+        .action-content p {
+            font-size: 12px;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+            text-align: center;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .page-break {
+            page-break-after: always;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Your Profile Intelligence Report</h1>
+            <p>Generated on: {{ "now"|date:"F d, Y" }}</p>
+            {% if submission.full_name %}
+            <p>Prepared for: <strong>{{ submission.full_name }}</strong></p>
+            {% endif %}
+        </div>
+        
+        <!-- Score Section -->
+        <div class="score-section">
+            <div class="score-display">Your Overall Score</div>
+            <div class="score-number">{{ result.total_score }}<span class="score-total">/100</span></div>
+            <div class="readiness-band">{{ result.readiness_band }}</div>
+            <p style="margin-top: 10px; font-size: 12px;">
+                {% if result.total_score >= 60 %}
+                Your profile shows <strong>strong potential</strong> for EB1A or EB2 NIW consideration.
+                {% else %}
+                Your profile shows <strong>developing potential</strong>. Focus on the recommended improvements.
+                {% endif %}
+            </p>
+        </div>
+        
+        <!-- Strengths Section -->
+        <div class="section strengths">
+            <div class="section-title">Your Strengths</div>
+            <p style="font-size: 13px; margin-bottom: 15px; color: #4b5563;">Areas where your profile excels</p>
+            {% for cat in result.strongest_categories %}
+            <div class="category-item">
+                <span class="category-name">{{ cat.category }}</span>
+                <span class="category-score">{{ cat.score }}/{{ cat.max_score }}</span>
+            </div>
+            {% empty %}
+            <p style="color: #9ca3af; font-style: italic;">No strength categories available.</p>
+            {% endfor %}
+        </div>
+        
+        <!-- Areas to Improve -->
+        <div class="section improvements">
+            <div class="section-title">Areas to Improve</div>
+            <p style="font-size: 13px; margin-bottom: 15px; color: #4b5563;">Priority categories for profile enhancement</p>
+            {% for cat in result.weakest_categories %}
+            <div class="category-item">
+                <span class="category-name">{{ cat.category }}</span>
+                <span class="category-score">{{ cat.score }}/{{ cat.max_score }}</span>
+            </div>
+            {% empty %}
+            <p style="color: #9ca3af; font-style: italic;">No improvement areas identified.</p>
+            {% endfor %}
+        </div>
+        
+        <!-- Action Plan -->
+        <div class="section action-plan">
+            <div class="section-title">Recommended Action Plan</div>
+            <p style="font-size: 13px; margin-bottom: 20px; color: #4b5563;">Prioritized steps to strengthen your EB1/EB2 profile</p>
+            {% for cat in result.weakest_categories %}
+            <div class="action-item">
+                <div class="action-number">{{ forloop.counter }}</div>
+                <div class="action-content">
+                    <h4>Strengthen {{ cat.category }}</h4>
+                    {% for key, val in action_mapping.items %}
+                        {% if key == cat.category %}
+                        <p>{{ val }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% empty %}
+            <p style="color: #9ca3af; font-style: italic;">No action items available.</p>
+            {% endfor %}
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2026 ImmigrationIntel. All rights reserved.</p>
+            <p>This report is confidential and for your personal use only.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -8,30 +8,206 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
+        
+        * {
+            scroll-behavior: smooth;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse-slow {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .animate-slide-down {
+            animation: slideDown 0.4s ease-out;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn-primary:active::before {
+            width: 300px;
+            height: 300px;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen flex flex-col">
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between py-4">
-            <a href="{% url 'assessments:landing' %}" class="flex items-center gap-2">
-                <span class="text-2xl font-extrabold text-blue-700 tracking-tight">Immigration<span class="text-slate-800">Intel</span></span>
+    <header class="bg-white/95 backdrop-blur-sm sticky top-0 z-50 shadow-sm border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between py-4 animate-slide-down">
+            <a href="{% url 'assessments:landing' %}" class="flex items-center gap-2 group">
+                <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-blue-600/30 transition-shadow">
+                    <span class="text-white font-extrabold text-sm">II</span>
+                </div>
+                <span class="text-xl font-extrabold tracking-tight hidden sm:block"><span class="gradient-text">Immigration</span><span class="text-slate-800">Intel</span></span>
             </a>
+            
+            <!-- Desktop Navigation -->
             <nav class="hidden md:flex gap-8 items-center">
-                <a href="#" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">How it Works</a>
-                <a href="#" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Pricing</a>
-                <a href="{% url 'assessments:form' %}" class="text-sm font-semibold bg-blue-600 text-white px-5 py-2.5 rounded-xl hover:bg-blue-700 hover:shadow-md transition-all">Start Assessment</a>
+                <a href="#how-it-works" class="text-sm font-medium text-slate-600 hover:text-blue-600 relative group transition-colors">How it Works<span class="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span></a>
+                <a href="#pricing" class="text-sm font-medium text-slate-600 hover:text-blue-600 relative group transition-colors">Pricing<span class="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span></a>
+                <a href="{% url 'assessments:form' %}" class="text-sm font-semibold bg-gradient-to-br from-blue-600 to-blue-700 text-white px-5 py-2.5 rounded-lg hover:shadow-lg hover:shadow-blue-600/30 transition-all hover:-translate-y-0.5 btn-primary">Start Assessment</a>
             </nav>
+            
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden flex flex-col gap-1.5 items-center justify-center w-10 h-10 rounded-lg hover:bg-slate-100 transition-colors">
+                <span class="w-6 h-0.5 bg-slate-900 transition-all duration-300 transform origin-center" id="hamburger-line-1"></span>
+                <span class="w-6 h-0.5 bg-slate-900 transition-all duration-300" id="hamburger-line-2"></span>
+                <span class="w-6 h-0.5 bg-slate-900 transition-all duration-300 transform origin-center" id="hamburger-line-3"></span>
+            </button>
         </div>
+        
+        <!-- Mobile Navigation Menu -->
+        <nav id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 shadow-lg">
+            <div class="px-4 sm:px-6 py-4 space-y-3">
+                <a href="#" class="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">How it Works</a>
+                <a href="#pricing" class="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Pricing</a>
+                <a href="{% url 'assessments:form' %}" class="block px-4 py-2 text-sm font-semibold bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-lg hover:shadow-blue-600/30 transition-all text-center">Start Assessment</a>
+            </div>
+        </nav>
     </header>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const line1 = document.getElementById('hamburger-line-1');
+            const line2 = document.getElementById('hamburger-line-2');
+            const line3 = document.getElementById('hamburger-line-3');
+            
+            let isOpen = false;
+            
+            function toggleMenu() {
+                isOpen = !isOpen;
+                
+                if (isOpen) {
+                    // Animate to X shape
+                    line1.classList.add('rotate-45', 'translate-y-2');
+                    line2.classList.add('opacity-0');
+                    line3.classList.add('-rotate-45', '-translate-y-2');
+                    mobileMenu.classList.remove('hidden');
+                    mobileMenu.classList.add('animate-fade-in');
+                } else {
+                    // Animate back to hamburger
+                    line1.classList.remove('rotate-45', 'translate-y-2');
+                    line2.classList.remove('opacity-0');
+                    line3.classList.remove('-rotate-45', '-translate-y-2');
+                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.remove('animate-fade-in');
+                }
+            }
+            
+            mobileMenuBtn.addEventListener('click', toggleMenu);
+            
+            // Close menu when clicking on a link
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    toggleMenu();
+                });
+            });
+            
+            // Close menu when window is resized to md or larger
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 768 && isOpen) {
+                    toggleMenu();
+                }
+            });
+        });
+    </script>
 
     <main class="flex-grow">
         {% block content %}
         {% endblock %}
     </main>
 
-    <footer class="bg-slate-900 text-slate-300 py-12 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
-            &copy; 2026 ImmigrationIntel. All rights reserved.
+    <footer class="bg-gradient-to-r from-slate-900 to-slate-800 text-slate-300 py-12 mt-12 border-t border-slate-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div class="text-center md:text-left">
+                    <div class="flex items-center gap-2 mb-3 justify-center md:justify-start">
+                        <div class="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg"></div>
+                        <span class="font-bold text-white">ImmigrationIntel</span>
+                    </div>
+                    <p class="text-sm text-slate-400">Smart assessment for your EB1/EB2 profile</p>
+                </div>
+                <div class="text-center">
+                    <p class="font-semibold text-white mb-2">Product</p>
+                    <p class="text-sm text-slate-400">Assessment Tool</p>
+                </div>
+                <div class="text-center">
+                    <p class="font-semibold text-white mb-2">Legal</p>
+                    <p class="text-sm text-slate-400">Privacy Policy</p>
+                </div>
+            </div>
+            <div class="border-t border-slate-700 pt-8 text-center text-sm">
+                &copy; 2026 ImmigrationIntel. All rights reserved.
+            </div>
         </div>
     </footer>
 </body>

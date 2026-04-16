@@ -2,73 +2,307 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 md:pt-32 md:pb-24 text-center">
-    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 text-slate-900 leading-tight max-w-4xl mx-auto">
-        Find out what your EB1A or EB2 NIW profile is missing
-    </h1>
-    <p class="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-        Get a personalized immigration readiness roadmap in under 10 minutes.
-    </p>
-    <div>
-        <a href="{% url 'assessments:form' %}" class="inline-block bg-blue-600 text-white font-medium text-lg px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors">
-            Start Free Assessment
-        </a>
+<section class="relative min-h-screen bg-gradient-to-b from-blue-50 via-white to-slate-50 flex items-center justify-center overflow-hidden">
+    <!-- Animated background gradient blobs -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+        <div class="absolute top-40 right-10 w-72 h-72 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse animation-delay-2000"></div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative z-10">
+        <div class="text-center space-y-8 animate-fade-in">
+            <div class="inline-block bg-gradient-to-r from-blue-100 to-indigo-100 px-4 py-2 rounded-full">
+                <span class="text-sm font-semibold gradient-text">Smart Assessment Platform</span>
+            </div>
+            
+            <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-tight">
+                <span>Find out what your</span> <br/>
+                <span class="gradient-text">EB1A or EB2 NIW</span> <br/>
+                <span>profile is missing</span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto leading-relaxed font-light">
+                Get a personalized immigration readiness roadmap in under 10 minutes with our AI-powered assessment.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+                <a href="{% url 'assessments:form' %}" class="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-lg px-8 py-4 rounded-xl hover:shadow-2xl hover:shadow-blue-600/30 hover:-translate-y-1 transition-all btn-primary">
+                    Start Free Assessment
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                </a>
+                <a href="#how-it-works" class="inline-flex items-center justify-center bg-white border-2 border-slate-300 text-slate-700 font-semibold text-lg px-8 py-4 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all">
+                    Learn More
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                </a>
+            </div>
+            
+            <div class="text-sm text-slate-500 pt-4">
+                ✓ No credit card required • Takes 7-10 minutes • Get results instantly
+            </div>
+        </div>
     </div>
 </section>
 
 <!-- How it Works Section -->
-<section class="bg-white py-20 border-t border-slate-100">
+<section id="how-it-works" class="py-20 md:py-28 bg-white border-t border-slate-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-center text-slate-900 mb-16">How it works</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-            <div class="flex flex-col items-center">
-                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold mb-6">1</div>
-                <h3 class="text-xl font-semibold mb-3 text-slate-900">Answer Questions</h3>
-                <p class="text-slate-600">Provide details about your professional and academic background.</p>
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4">How it Works</h2>
+            <p class="text-xl text-slate-600 max-w-2xl mx-auto">Simple, transparent, and streamlined</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Step 1 -->
+            <div class="group card-hover">
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-2xl border border-blue-100 shadow-sm h-full">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-full flex items-center justify-center text-3xl font-bold mb-6 shadow-lg group-hover:shadow-blue-600/30 transition-shadow">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3">Answer Questions</h3>
+                    <p class="text-slate-600 leading-relaxed">Provide details about your professional and academic background through our intuitive step-by-step form.</p>
+                </div>
             </div>
-            <div class="flex flex-col items-center">
-                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold mb-6">2</div>
-                <h3 class="text-xl font-semibold mb-3 text-slate-900">Get Your Score</h3>
-                <p class="text-slate-600">Our system analyzes your profile against key EB1/EB2 criteria.</p>
+            
+            <!-- Step 2 -->
+            <div class="group card-hover">
+                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 p-8 rounded-2xl border border-indigo-100 shadow-sm h-full">
+                    <div class="w-16 h-16 bg-gradient-to-br from-indigo-600 to-indigo-700 text-white rounded-full flex items-center justify-center text-3xl font-bold mb-6 shadow-lg group-hover:shadow-indigo-600/30 transition-shadow">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3">Get Your Score</h3>
+                    <p class="text-slate-600 leading-relaxed">Our system analyzes your profile against key EB1/EB2 criteria using proven frameworks.</p>
+                </div>
             </div>
-            <div class="flex flex-col items-center">
-                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold mb-6">3</div>
-                <h3 class="text-xl font-semibold mb-3 text-slate-900">Get Roadmap</h3>
-                <p class="text-slate-600">Receive actionable insights and next steps to improve your case.</p>
+            
+            <!-- Step 3 -->
+            <div class="group card-hover">
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-2xl border border-purple-100 shadow-sm h-full">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-700 text-white rounded-full flex items-center justify-center text-3xl font-bold mb-6 shadow-lg group-hover:shadow-purple-600/30 transition-shadow">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3">Get Roadmap</h3>
+                    <p class="text-slate-600 leading-relaxed">Receive actionable insights and a personalized action plan to improve your case.</p>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Benefits Section -->
-<section class="py-20 bg-slate-50 border-t border-slate-100">
+<section class="py-20 md:py-28 bg-gradient-to-b from-slate-50 to-white border-t border-slate-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-center text-slate-900 mb-16">Why use ImmigrationIntel?</h2>
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Why Choose ImmigrationIntel?</h2>
+            <p class="text-xl text-slate-600 max-w-2xl mx-auto">Everything you need to understand your profile strength</p>
+        </div>
+        
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-                <h3 class="text-lg font-bold text-slate-900 mb-3">Identify Clear Gaps</h3>
-                <p class="text-slate-600 leading-relaxed">Know exactly which areas of your profile need strengthening before you apply.</p>
+            <!-- Benefit 1 -->
+            <div class="group card-hover">
+                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm h-full hover:border-green-200">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center text-green-600 border border-green-200 mb-6 group-hover:shadow-lg group-hover:shadow-green-600/20 transition-shadow">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-3">Identify Clear Gaps</h3>
+                    <p class="text-slate-600 leading-relaxed">Know exactly which areas of your profile need strengthening before you apply.</p>
+                </div>
             </div>
-            <div class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-                <h3 class="text-lg font-bold text-slate-900 mb-3">Actionable Steps</h3>
-                <p class="text-slate-600 leading-relaxed">Get concrete recommendations on earning citations, securing critical roles, or obtaining patents.</p>
+            
+            <!-- Benefit 2 -->
+            <div class="group card-hover">
+                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm h-full hover:border-blue-200">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-100 to-cyan-100 flex items-center justify-center text-blue-600 border border-blue-200 mb-6 group-hover:shadow-lg group-hover:shadow-blue-600/20 transition-shadow">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-3">Actionable Steps</h3>
+                    <p class="text-slate-600 leading-relaxed">Get concrete recommendations on earning citations, securing roles, or obtaining patents.</p>
+                </div>
             </div>
-            <div class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-                <h3 class="text-lg font-bold text-slate-900 mb-3">Expert Insight</h3>
-                <p class="text-slate-600 leading-relaxed">Built on proven frameworks from successful EB1A and EB2 NIW approvals.</p>
+            
+            <!-- Benefit 3 -->
+            <div class="group card-hover">
+                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm h-full hover:border-purple-200">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center text-purple-600 border border-purple-200 mb-6 group-hover:shadow-lg group-hover:shadow-purple-600/20 transition-shadow">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-3">Expert Insight</h3>
+                    <p class="text-slate-600 leading-relaxed">Built on proven frameworks from successful EB1A and EB2 NIW approvals.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section id="pricing" class="py-20 md:py-28 bg-white border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Simple, Transparent Pricing</h2>
+            <p class="text-xl text-slate-600 max-w-2xl mx-auto">Choose the plan that works best for your immigration journey</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Starter Plan -->
+            <div class="group card-hover">
+                <div class="h-full bg-white border-2 border-slate-200 rounded-2xl p-8 shadow-sm hover:border-blue-300 hover:shadow-lg transition-all">
+                    <div class="mb-6">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-2">Starter</h3>
+                        <p class="text-slate-600 text-sm mb-4">Perfect for getting started</p>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-5xl font-bold text-slate-900">Free</span>
+                        </div>
+                    </div>
+                    
+                    <a href="{% url 'assessments:form' %}" class="block w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-3 px-4 rounded-lg hover:shadow-lg hover:shadow-blue-600/30 transition-all text-center mb-8">
+                        Start Assessment
+                    </a>
+                    
+                    <div class="space-y-4">
+                        <h4 class="font-semibold text-slate-900 text-sm uppercase tracking-wide">What's included:</h4>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">Quick assessment (7-10 min)</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">Basic profile analysis</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">Overall score & insight</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">No credit card required</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Professional Plan -->
+            <div class="group card-hover relative">
+                <!-- Popular Badge -->
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2">
+                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
+                        Most Popular
+                    </div>
+                </div>
+                
+                <div class="h-full bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-2xl p-8 shadow-lg hover:shadow-xl hover:border-blue-400 transition-all">
+                    <div class="mb-6">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-2">Professional</h3>
+                        <p class="text-slate-600 text-sm mb-4">For serious candidates</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-5xl font-bold text-slate-900">$49</span>
+                            <span class="text-slate-600">one-time</span>
+                        </div>
+                    </div>
+                    
+                    <button class="block w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:shadow-lg hover:shadow-blue-600/30 transition-all text-center mb-8 btn-primary">
+                        Upgrade Now
+                    </button>
+                    
+                    <div class="space-y-4">
+                        <h4 class="font-semibold text-slate-900 text-sm uppercase tracking-wide">Everything in Starter, plus:</h4>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">Detailed gap analysis</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">Personalized action plan</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">Category-specific recommendations</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">Priority support (24hr response)</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">Downloadable report</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Premium Plan -->
+            <div class="group card-hover">
+                <div class="h-full bg-white border-2 border-slate-200 rounded-2xl p-8 shadow-sm hover:border-purple-300 hover:shadow-lg transition-all">
+                    <div class="mb-6">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-2">Premium</h3>
+                        <p class="text-slate-600 text-sm mb-4">For maximum certainty</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-5xl font-bold text-slate-900">$199</span>
+                            <span class="text-slate-600">one-time</span>
+                        </div>
+                    </div>
+                    
+                    <button class="block w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-4 rounded-lg hover:shadow-lg hover:shadow-purple-600/30 transition-all text-center mb-8 btn-primary">
+                        Get Premium
+                    </button>
+                    
+                    <div class="space-y-4">
+                        <h4 class="font-semibold text-slate-900 text-sm uppercase tracking-wide">Everything in Professional, plus:</h4>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">1-on-1 consultation call (30 min)</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">Expert advisory review</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">Customized strategy document</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">Priority support (4hr response)</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">Lifetime access to results</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="text-slate-600 text-sm">Quarterly check-ins</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Bottom CTA Section -->
-<section class="py-24 bg-white border-t border-slate-100 text-center">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-slate-900 mb-6">Ready to see where you stand?</h2>
-        <p class="text-lg text-slate-600 mb-10">Take the first step toward your green card today.</p>
-        <a href="{% url 'assessments:form' %}" class="inline-block bg-blue-600 text-white font-medium text-lg px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors">
-            Start Free Assessment
-        </a>
+<section class="py-20 md:py-28 bg-gradient-to-r from-blue-600 to-indigo-600 text-white relative overflow-hidden">
+    <!-- Background decoration -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-white rounded-full -mr-48 -mt-48"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full -ml-48 -mb-48"></div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">Ready to see where you stand?</h2>
+        <p class="text-xl md:text-2xl mb-10 text-blue-100">Take the first step toward your green card today. Our assessment takes just 7-10 minutes.</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'assessments:form' %}" class="inline-flex items-center justify-center bg-white text-blue-600 font-bold text-lg px-8 py-4 rounded-xl hover:shadow-2xl hover:shadow-white/30 hover:-translate-y-1 transition-all btn-primary font-semibold">
+                Start Free Assessment
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+            </a>
+            <a href="#pricing" class="inline-flex items-center justify-center bg-transparent border-2 border-white text-white font-semibold text-lg px-8 py-4 rounded-xl hover:bg-white/10 transition-all">
+                Schedule a Call
+            </a>
+        </div>
     </div>
 </section>
 {% endblock %}

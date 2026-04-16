@@ -1,10 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import transaction
 from django.contrib import messages
+from django.http import HttpResponse
+from django.conf import settings
 from .models import Submission, CategoryScore
 from .services import ScoringEngine
 import json
 import logging
+import re
+from io import BytesIO
+from xhtml2pdf import pisa
 
 logger = logging.getLogger(__name__)
 
@@ -57,8 +62,6 @@ def submit_assessment(request):
             # Send Emails (outside transaction to prevent holding locks during network I/O)
             try:
                 from django.core.mail import EmailMultiAlternatives
-                from django.template.loader import render_to_string
-                from django.conf import settings
                 
                 # 1. Send User Summary Email
                 user_subject = "Your EB1/EB2 Profile Intelligence Report"
@@ -122,6 +125,8 @@ def assessment_results(request, pk):
         'salary': 'Provide objective comparative evidence that your remuneration is significantly higher than peers.',
         'memberships': 'Pursue exclusive memberships in professional associations that require outstanding achievements.',
         'recommendations': 'Identify independent experts who can provide strong recommendation letters outlining your specific impact.',
+        'speaking': 'Pursue speaking opportunities at major conferences to establish expertise.',
+        'patents': 'Document and protect original contributions of major significance.',
         'endeavor': 'Refine and clearly articulate your proposed endeavor and strictly document its national importance.'
     }
 
@@ -132,3 +137,77 @@ def assessment_results(request, pk):
         'action_mapping': action_mapping
     }
     return render(request, 'assessments/results.html', context)
+
+def resend_results_email(request, pk):
+    """Resend results email to user"""
+    submission = get_object_or_404(Submission, pk=pk)
+    
+    try:
+        from django.core.mail import EmailMultiAlternatives
+        
+        user_subject = "Your EB1/EB2 Profile Intelligence Report"
+        user_text = f"Hi {submission.full_name},\n\nYour score is {submission.total_score}/100 ({submission.readiness_band}).\n\nPlease visit the link below to view your full report:\nhttp://your-domain.com/results/{submission.pk}/"
+        user_html = render_to_string('emails/user_summary.html', {'submission': submission})
+        
+        user_msg = EmailMultiAlternatives(
+            subject=user_subject,
+            body=user_text,
+            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'support@immigrationintel.com'),
+            to=[submission.email]
+        )
+        user_msg.attach_alternative(user_html, "text/html")
+        user_msg.send()
+        
+        messages.success(request, f'Results email sent to {submission.email}')
+    except Exception as e:
+        logger.error(f"Failed to resend email: {str(e)}")
+        messages.error(request, 'Failed to send email. Please try again.')
+    
+    return redirect('assessments:results', pk=pk)
+
+def download_results_pdf(request, pk):
+    """Generate and download results as PDF"""
+    submission = get_object_or_404(Submission, pk=pk)
+    
+    try:
+        # Rebuild the engine context for PDF presentation
+        engine = ScoringEngine(submission.raw_answers)
+        result = engine.process()
+        
+        action_mapping = {
+            'publications': 'Build authority by increasing scholarly publications and tracking performance metrics.',
+            'citations': 'Gather evidence of others citing or relying on your work in significant ways.',
+            'awards': 'Apply for or rigorously document nationally/internationally recognized prizes for excellence.',
+            'media': 'Build media visibility by getting your work featured in major trade or mainstream publications.',
+            'judging': 'Seek opportunities to act as a judge or peer reviewer of the work of others in your field.',
+            'leadership': 'Leverage and document your role as a leader or critical contributor in distinguished organizations.',
+            'salary': 'Provide objective comparative evidence that your remuneration is significantly higher than peers.',
+            'memberships': 'Pursue exclusive memberships in professional associations that require outstanding achievements.',
+            'recommendations': 'Identify independent experts who can provide strong recommendation letters outlining your specific impact.',
+            'endeavor': 'Refine and clearly articulate your proposed endeavor and strictly document its national importance.'
+        }
+        
+        context = {
+            'submission': submission,
+            'result': result,
+            'action_mapping': action_mapping
+        }
+        
+        # Render HTML template for PDF
+        html_string = render_to_string('assessments/results_pdf.html', context)
+        
+        # Generate PDF
+        html = BytesIO(html_string.encode('utf-8'))
+        pdf = BytesIO()
+        pisa.pisaDocument(html, pdf)
+        
+        # Return PDF as response
+        safe_name = re.sub(r'[^a-zA-Z0-9_-]', '', submission.full_name.replace(" ", "_"))
+        response = HttpResponse(pdf.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="EB1_EB2_Report_{safe_name}.pdf"'
+        return response
+        
+    except Exception as e:
+        logger.error(f"Failed to generate PDF: {str(e)}")
+        messages.error(request, 'Failed to generate PDF. Please try again.')
+        return redirect('assessments:results', pk=pk)

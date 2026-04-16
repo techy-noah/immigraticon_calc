@@ -9,6 +9,8 @@ class ScoringEngine:
         'salary': 10,
         'memberships': 5,
         'recommendations': 10,
+        'speaking': 5,
+        'patents': 10,
         'endeavor': 5
     }
 
@@ -58,7 +60,13 @@ class ScoringEngine:
         # 9. Recommendations
         scores['recommendations'] = 10 if self._to_bool(self.raw_answers.get('can_get_letters')) else 0
         
-        # 10. Endeavor
+        # 10. Speaking Engagements
+        scores['speaking'] = 5 if self._to_bool(self.raw_answers.get('has_speaking')) else 0
+
+        # 11. Patents / Contributions
+        scores['patents'] = 10 if self._to_bool(self.raw_answers.get('has_patents')) else 0
+
+        # 12. Endeavor
         endeavor_text = self.raw_answers.get('proposed_endeavor', '').strip()
         scores['endeavor'] = 5 if len(endeavor_text) > 20 else 0
 
