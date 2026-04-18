@@ -1,6 +1,7 @@
 import threading
 import logging
 import os
+import sys
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -12,19 +13,20 @@ def generate_ai_report_async(submission_id: int) -> None:
         try:
             import django
             os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
-            django.setup()
+            
+            if 'django' not in sys.modules:
+                django.setup()
             
             from assessments.models import Submission
             from assessments.services import ScoringEngine, AIReportService
-            from django.conf import settings
-            from django.template.loader import render_to_string
-            from django.core.mail import EmailMultiAlternatives
             
             submission = Submission.objects.get(pk=submission_id)
             
             if submission.ai_report:
                 logger.info(f"AI report already exists for submission {submission_id}, skipping.")
                 return
+            
+            logger.info(f"Starting AI report generation for submission {submission_id}")
             
             engine = ScoringEngine(submission.raw_answers)
             result = engine.process()
@@ -48,9 +50,12 @@ def generate_ai_report_async(submission_id: int) -> None:
                 logger.warning(f"AI report generation returned None for submission {submission_id}")
                 
         except Exception as e:
+            import traceback
             logger.error(f"Background AI report generation failed for submission {submission_id}: {e}")
+            logger.error(traceback.format_exc())
     
-    thread = threading.Thread(target=_task, daemon=True)
+    thread = threading.Thread(target=_task)
+    thread.daemon = True
     thread.start()
     logger.info(f"Started background AI report generation for submission {submission_id}")
 
@@ -73,14 +78,18 @@ def _send_user_notification(submission: Any, ai_report: str, result: dict) -> No
         
         html_content = render_to_string('emails/ai_report_notification.html', context)
         
+        strengths_list = result.get('strongest_categories', [])[:3]
+        gaps_list = result.get('weakest_categories', [])[:3]
+        
         strengths_text = '\n'.join([
             f"- {s['category']}: {s['score']}/{s['max_score']}"
-            for s in result.get('strongest_categories', [])[:3]
-        ])
+            for s in strengths_list
+        ]) if strengths_list else "None identified"
+        
         gaps_text = '\n'.join([
             f"- {g['category']}: {g['score']}/{g['max_score']}"
-            for g in result.get('weakest_categories', [])[:3]
-        ])
+            for g in gaps_list
+        ]) if gaps_list else "None identified"
         
         text_content = f"""Hi {submission.full_name},
 
@@ -88,7 +97,7 @@ Your Expert Analysis Is Ready!
 
 Score: {submission.total_score}/100 ({submission.readiness_band})
 
-{ai_summary[:500]}
+{ai_summary[:500] if ai_summary else 'Your detailed analysis is ready.'}
 
 ---
 Your Key Strengths:
@@ -107,7 +116,7 @@ ImmigrationIntel
 """
         
         msg = EmailMultiAlternatives(
-            subject=f"Your EB1/EB2 Expert Analysis — {submission.total_score}/100",
+            subject=f"Your EB1/EB2 Expert Analysis - Score: {submission.total_score}/100",
             body=text_content,
             from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'support@immigrationintel.com'),
             to=[submission.email]
@@ -118,7 +127,9 @@ ImmigrationIntel
         logger.info(f"AI report email sent to user {submission.email}")
         
     except Exception as e:
+        import traceback
         logger.error(f"Failed to send AI report email to user: {e}")
+        logger.error(traceback.format_exc())
 
 
 def _send_admin_notification(submission: Any, ai_report: str) -> None:
@@ -142,7 +153,7 @@ Score: {submission.total_score}/100
 Readiness: {submission.readiness_band}
 
 AI Report Preview:
-{ai_report[:500]}...
+{ai_report[:500] if ai_report else 'N/A'}...
 
 View in Admin: https://immigrationintel.com/admin/assessments/submission/{submission.id}/change/
 """
@@ -150,7 +161,7 @@ View in Admin: https://immigrationintel.com/admin/assessments/submission/{submis
         admin_email = getattr(settings, 'ADMIN_EMAIL', 'admin@immigrationintel.com')
         
         msg = EmailMultiAlternatives(
-            subject=f"[AI] Report Ready: {submission.full_name} — {submission.total_score}/100",
+            subject=f"[AI] Report Ready: {submission.full_name} - Score: {submission.total_score}/100",
             body=text_content,
             from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'support@immigrationintel.com'),
             to=[admin_email]
@@ -161,11 +172,16 @@ View in Admin: https://immigrationintel.com/admin/assessments/submission/{submis
         logger.info(f"AI report admin notification sent for submission {submission.id}")
         
     except Exception as e:
+        import traceback
         logger.error(f"Failed to send AI report admin notification: {e}")
+        logger.error(traceback.format_exc())
 
 
 def _extract_summary(ai_report: str) -> str:
-    """Extract the summary/executive summary section from AI report."""
+    """Extract the summary section from AI report."""
+    if not ai_report:
+        return ''
+    
     lines = ai_report.split('\n')
     
     in_summary = False
@@ -209,7 +225,9 @@ def send_submission_emails_async(submission_id: int) -> None:
         try:
             import django
             os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
-            django.setup()
+            
+            if 'django' not in sys.modules:
+                django.setup()
             
             from assessments.models import Submission
             from django.conf import settings
@@ -222,12 +240,12 @@ def send_submission_emails_async(submission_id: int) -> None:
                 logger.info(f"Emails already sent for submission {submission_id}, skipping.")
                 return
             
-            # Send User Summary Email
-            user_subject = f"Your EB1/EB2 Assessment — Score: {submission.total_score}/100"
+            logger.info(f"Sending submission emails for {submission_id}")
+            
             user_html = render_to_string('emails/user_summary.html', {'submission': submission})
             
             user_msg = EmailMultiAlternatives(
-                subject=user_subject,
+                subject=f"Your EB1/EB2 Assessment - Score: {submission.total_score}/100",
                 body=f"Hi {submission.full_name},\n\nYour assessment score is {submission.total_score}/100 ({submission.readiness_band}).\n\nView your full report at the link we sent earlier.\n\nQuestions? Reply to this email.\n\nBest,\nImmigrationIntel Team",
                 from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'support@immigrationintel.com'),
                 to=[submission.email]
@@ -235,14 +253,11 @@ def send_submission_emails_async(submission_id: int) -> None:
             user_msg.attach_alternative(user_html, "text/html")
             user_msg.send()
             
-            # Send Admin Notification Email
-            admin_subject = f"New Submission: {submission.full_name} - Score: {submission.total_score}"
             admin_html = render_to_string('emails/admin_notification.html', {'submission': submission})
-            
             admin_email = getattr(settings, 'ADMIN_EMAIL', 'admin@immigrationintel.com')
             
             admin_msg = EmailMultiAlternatives(
-                subject=admin_subject,
+                subject=f"New Submission: {submission.full_name} - Score: {submission.total_score}",
                 body=f"New submission from {submission.full_name} ({submission.email}). Score: {submission.total_score}.",
                 from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'support@immigrationintel.com'),
                 to=[admin_email]
@@ -250,15 +265,17 @@ def send_submission_emails_async(submission_id: int) -> None:
             admin_msg.attach_alternative(admin_html, "text/html")
             admin_msg.send()
             
-            # Update submission
             submission.email_sent = True
             submission.save(update_fields=['email_sent'])
             
             logger.info(f"Submission emails sent for {submission_id}")
             
         except Exception as e:
+            import traceback
             logger.error(f"Failed to send submission emails for {submission_id}: {e}")
+            logger.error(traceback.format_exc())
     
-    thread = threading.Thread(target=_task, daemon=True)
+    thread = threading.Thread(target=_task)
+    thread.daemon = True
     thread.start()
     logger.info(f"Started submission email task for {submission_id}")

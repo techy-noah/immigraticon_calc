@@ -39,6 +39,19 @@ def submit_assessment(request):
                 engine = ScoringEngine(raw_answers)
                 result = engine.process()
 
+                # Handle CV upload
+                cv_file = request.FILES.get('cv')
+                cv_text = None
+                
+                if cv_file:
+                    from .services.cv_parser import CVParser
+                    parser = CVParser()
+                    cv_text = parser.parse_file(cv_file)
+                    
+                    if cv_text:
+                        cv_key_info = parser.extract_key_info(cv_text)
+                        raw_answers['cv_extracted'] = cv_key_info
+
                 # Create submission
                 submission = Submission.objects.create(
                     full_name=full_name,
@@ -47,7 +60,9 @@ def submit_assessment(request):
                     phone=phone,
                     raw_answers=raw_answers,
                     total_score=result['total_score'],
-                    readiness_band=result['readiness_band']
+                    readiness_band=result['readiness_band'],
+                    cv=cv_file,
+                    cv_text=cv_text[:50000] if cv_text else None
                 )
 
                 # Build CategoryScores
@@ -143,6 +158,18 @@ def get_ai_report(request, pk):
         return JsonResponse({
             'status': 'generating'
         })
+
+def regenerate_ai_report(request, pk):
+    """Regenerate AI report for a submission."""
+    submission = get_object_or_404(Submission, pk=pk)
+    
+    submission.ai_report = None
+    submission.save(update_fields=['ai_report'])
+    
+    from .services.ai_tasks import AIReportGenerator
+    AIReportGenerator.trigger(submission)
+    
+    return JsonResponse({'status': 'triggered'})
 
 def download_results_pdf(request, pk):
     """Generate and download results as PDF"""

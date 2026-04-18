@@ -1,4 +1,10 @@
 from django.db import models
+import os
+
+def upload_to_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f"{instance.pk}_{instance.full_name.replace(' ', '_')}.{ext}"
+    return f'cvs/{filename}'
 
 class Submission(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -26,6 +32,10 @@ class Submission(models.Model):
     eb1_eligibility = models.CharField(max_length=50, choices=ELIGIBILITY_CHOICES, blank=True, null=True)
     ai_report = models.TextField(null=True, blank=True)
     email_sent = models.BooleanField(default=False)
+    
+    cv = models.FileField(upload_to='cvs/', blank=True, null=True)
+    cv_text = models.TextField(blank=True, null=True)
+    cv_processed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.full_name} - {self.email}"
