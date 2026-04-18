@@ -1,6 +1,5 @@
 import logging
-import io
-from typing import Any, Optional
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -44,22 +43,38 @@ class CVParser:
             return None
     
     def _parse_pdf(self, uploaded_file) -> str:
-        """Extract text from PDF."""
-        if not self.pdfplumber:
-            return uploaded_file.read().decode('utf-8', errors='ignore')
+        """Extract text from PDF using available library."""
+        # Try PyPDF2 first (simpler, no C extensions)
+        try:
+            import PyPDF2
+            uploaded_file.seek(0)
+            reader = PyPDF2.PdfReader(uploaded_file)
+            text = ''
+            for page in reader.pages:
+                text += page.extract_text() + '\n'
+            if text.strip():
+                return text
+        except Exception as e:
+            logger.debug(f"PyPDF2 failed: {e}")
         
+        # Fallback: just read raw bytes as text (will be garbage but won't crash)
         try:
             uploaded_file.seek(0)
-            with self.pdfplumber.open(uploaded_file) as pdf:
-                text = ''
-                for page in pdf.pages:
-                    page_text = page.extract_text()
-                    if page_text:
-                        text += page_text + '\n'
-                return text if text else ''
-        except Exception as e:
-            logger.error(f"PDF parsing error: {e}")
-            return uploaded_file.read().decode('utf-8', errors='ignore')
+            content = uploaded_file.read()
+            # Try to extract readable text from PDF raw
+            text_parts = []
+            for line in content.split(b'\n'):
+                try:
+                    decoded = line.decode('utf-8', errors='ignore')
+                    if len(decoded) > 20 and len(decoded) < 200:
+                        text_parts.append(decoded)
+                except:
+                    pass
+            return '\n'.join(text_parts[:500])
+        except:
+            pass
+        
+        return "Could not parse PDF. Please upload as text or Word document."
     
     def _parse_docx(self, uploaded_file) -> str:
         """Extract text from DOCX."""
@@ -80,6 +95,8 @@ class CVParser:
     
     def extract_key_info(self, text: str) -> dict:
         """Extract key information from CV text."""
+        import re
+        
         info = {
             'name': '',
             'email': '',
@@ -101,37 +118,36 @@ class CVParser:
             line = line.strip()
             lower = line.lower()
             
+            # Extract email
             if '@' in line and '.' in line and not info['email']:
                 for word in line.split():
-                    if '@' in word:
+                    if '@' in word and '.' in word:
                         info['email'] = word
                         break
             
-            import re
+            # Extract phone
             phone_match = re.search(r'[\d\-\(\)]{10,}', line)
             if phone_match and not info['phone']:
                 info['phone'] = phone_match.group()
             
-            if 'education' in lower or 'degree' in lower or 'university' in lower or 'phd' in lower or 'master' in lower:
+            # Categorize content
+            if any(kw in lower for kw in ['education', 'degree', 'university', 'phd', 'master', 'bachelor', 'college']):
                 if line and len(line) > 10:
                     info['education'].append(line)
             
-            if 'experience' in lower or 'employment' in lower or 'work' in lower:
+            elif any(kw in lower for kw in ['experience', 'employment', 'work history', 'position', 'role']):
                 if line and len(line) > 10:
                     info['experience'].append(line)
             
-            if 'publication' in lower or 'paper' in lower or 'journal' in lower:
+            elif any(kw in lower for kw in ['publication', 'paper', 'journal', 'conference', 'presented']):
                 if line and len(line) > 10:
                     info['publications'].append(line)
             
-            if 'award' in lower or 'prize' in lower or 'recognition' in lower:
+            elif any(kw in lower for kw in ['award', 'prize', 'recognition', 'honor', 'grant']):
                 if line and len(line) > 10:
                     info['awards'].append(line)
-            
-            if 'skill' in lower or 'proficient' in lower:
-                if line and len(line) > 10:
-                    info['skills'].append(line)
         
+        # Limit entries
         info['education'] = info['education'][:5]
         info['experience'] = info['experience'][:5]
         info['publications'] = info['publications'][:10]
