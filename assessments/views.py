@@ -10,7 +10,12 @@ import json
 import logging
 import re
 from io import BytesIO
-from xhtml2pdf import pisa
+
+try:
+    from xhtml2pdf import pisa
+    HAS_PDF = True
+except ImportError:
+    HAS_PDF = False
 
 logger = logging.getLogger(__name__)
 
@@ -174,6 +179,9 @@ def regenerate_ai_report(request, pk):
 def download_results_pdf(request, pk):
     """Generate and download results as PDF"""
     submission = get_object_or_404(Submission, pk=pk)
+    
+    if not HAS_PDF:
+        return HttpResponse("PDF generation is not available on this server.", status=503)
     
     try:
         # Rebuild the engine context for PDF presentation
