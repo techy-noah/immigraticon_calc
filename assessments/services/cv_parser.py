@@ -5,23 +5,10 @@ logger = logging.getLogger(__name__)
 
 
 class CVParser:
-    """Parse CV/resume to extract structured information."""
+    """Parse CV/resume - simplified version for deployment."""
     
     def __init__(self):
-        self.pdfplumber = None
-        self.docx = None
-        
-        try:
-            import pdfplumber
-            self.pdfplumber = pdfplumber
-        except ImportError:
-            pass
-        
-        try:
-            from docx import Document
-            self.Document = Document
-        except ImportError:
-            pass
+        pass
     
     def parse_file(self, uploaded_file) -> Optional[str]:
         """Parse uploaded CV file and return text content."""
@@ -43,55 +30,42 @@ class CVParser:
             return None
     
     def _parse_pdf(self, uploaded_file) -> str:
-        """Extract text from PDF using available library."""
-        # Try PyPDF2 first (simpler, no C extensions)
+        """Extract text from PDF using PyPDF2."""
         try:
             import PyPDF2
             uploaded_file.seek(0)
             reader = PyPDF2.PdfReader(uploaded_file)
             text = ''
             for page in reader.pages:
-                text += page.extract_text() + '\n'
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text + '\n'
             if text.strip():
                 return text
-        except Exception as e:
-            logger.debug(f"PyPDF2 failed: {e}")
-        
-        # Fallback: just read raw bytes as text (will be garbage but won't crash)
-        try:
-            uploaded_file.seek(0)
-            content = uploaded_file.read()
-            # Try to extract readable text from PDF raw
-            text_parts = []
-            for line in content.split(b'\n'):
-                try:
-                    decoded = line.decode('utf-8', errors='ignore')
-                    if len(decoded) > 20 and len(decoded) < 200:
-                        text_parts.append(decoded)
-                except:
-                    pass
-            return '\n'.join(text_parts[:500])
-        except:
+        except ImportError:
             pass
+        except Exception as e:
+            logger.debug(f"PDF parsing: {e}")
         
-        return "Could not parse PDF. Please upload as text or Word document."
+        # Fallback: return file info
+        return f"[PDF file: {uploaded_file.name}]"
     
     def _parse_docx(self, uploaded_file) -> str:
         """Extract text from DOCX."""
-        if not self.Document:
-            return ''
-        
         try:
+            from docx import Document
             uploaded_file.seek(0)
-            doc = self.Document(uploaded_file)
+            doc = Document(uploaded_file)
             text = ''
             for para in doc.paragraphs:
                 if para.text.strip():
                     text += para.text + '\n'
             return text
+        except ImportError:
+            return "[Unable to parse DOCX - docx not installed]"
         except Exception as e:
-            logger.error(f"DOCX parsing error: {e}")
-            return ''
+            logger.debug(f"DOCX parsing: {e}")
+            return f"[DOCX file: {uploaded_file.name}]"
     
     def extract_key_info(self, text: str) -> dict:
         """Extract key information from CV text."""
@@ -106,7 +80,6 @@ class CVParser:
             'publications': [],
             'awards': [],
             'skills': [],
-            'summary': ''
         }
         
         if not text:
@@ -114,44 +87,36 @@ class CVParser:
         
         lines = text.split('\n')
         
-        for i, line in enumerate(lines):
+        for line in lines:
             line = line.strip()
             lower = line.lower()
             
-            # Extract email
             if '@' in line and '.' in line and not info['email']:
                 for word in line.split():
                     if '@' in word and '.' in word:
                         info['email'] = word
                         break
             
-            # Extract phone
             phone_match = re.search(r'[\d\-\(\)]{10,}', line)
             if phone_match and not info['phone']:
                 info['phone'] = phone_match.group()
             
-            # Categorize content
-            if any(kw in lower for kw in ['education', 'degree', 'university', 'phd', 'master', 'bachelor', 'college']):
+            if any(kw in lower for kw in ['education', 'degree', 'university', 'phd', 'master', 'bachelor']):
                 if line and len(line) > 10:
                     info['education'].append(line)
-            
-            elif any(kw in lower for kw in ['experience', 'employment', 'work history', 'position', 'role']):
+            elif any(kw in lower for kw in ['experience', 'employment', 'position', 'role']):
                 if line and len(line) > 10:
                     info['experience'].append(line)
-            
-            elif any(kw in lower for kw in ['publication', 'paper', 'journal', 'conference', 'presented']):
+            elif any(kw in lower for kw in ['publication', 'journal', 'conference']):
                 if line and len(line) > 10:
                     info['publications'].append(line)
-            
-            elif any(kw in lower for kw in ['award', 'prize', 'recognition', 'honor', 'grant']):
+            elif any(kw in lower for kw in ['award', 'prize', 'honor']):
                 if line and len(line) > 10:
                     info['awards'].append(line)
         
-        # Limit entries
         info['education'] = info['education'][:5]
         info['experience'] = info['experience'][:5]
         info['publications'] = info['publications'][:10]
         info['awards'] = info['awards'][:5]
-        info['skills'] = info['skills'][:10]
         
         return info
